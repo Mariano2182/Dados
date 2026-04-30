@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Dados</title>
   <style>
+    <audio id="sonido" src="sonido.mp3"></audio>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
@@ -55,37 +56,88 @@
     <div class="text-dice" id="textDice">Presioná tirar</div>
 
     <button onclick="tirarDados()">Tirar</button>
+    document.getElementById("sonido").play();
   </div>
 
   <script>
-    const imagenes = [
-      "imagen1.png",
-      "imagen2.png",
-      "imagen3.png",
-      "imagen4.png",
-      "imagen5.png",
-      "imagen6.png"
-    ];
+  const imagenes = [
+    "imagen1.gif",
+    "imagen2.gif",
+    "imagen3.gif",
+    "imagen4.gif",
+    "imagen5.gif",
+    "imagen6.gif"
+  ];
 
-    const textos = [
-      "1 metida",
-      "2 metidas",
-      "fuertazo",
-      "rápido hasta terminar",
-      "lento hasta terminar",
-      "2 minutos",
-      "5 minutos",
-      "despacito"
-    ];
+  const textos = [
+    "1 metida",
+    "2 metidas",
+    "fuertazo",
+    "rápido hasta terminar",
+    "lento hasta terminar",
+    "2 minutos",
+    "5 minutos",
+    "despacito"
+  ];
 
-    function tirarDados() {
+  let tirando = false;
+
+  function tirarDados() {
+    if (tirando) return; // evita doble click
+    tirando = true;
+
+    let velocidad = 50; // empieza rápido
+    let contador = 0;
+
+    function animar() {
       const randomImg = Math.floor(Math.random() * imagenes.length);
-      document.getElementById("imageDice").src = imagenes[randomImg];
-
       const randomText = Math.floor(Math.random() * textos.length);
+
+      document.getElementById("imageDice").src = imagenes[randomImg];
       document.getElementById("textDice").innerText = textos[randomText];
+
+      contador++;
+      velocidad += 10; // se va frenando
+
+      if (contador < 20) {
+        setTimeout(animar, velocidad);
+      } else {
+        resultadoFinal();
+      }
     }
-  </script>
+
+    animar();
+  }
+
+  function resultadoFinal() {
+    const finalImg = Math.floor(Math.random() * imagenes.length);
+    const finalText = Math.floor(Math.random() * textos.length);
+
+    const img = document.getElementById("imageDice");
+    const text = document.getElementById("textDice");
+
+    img.src = imagenes[finalImg];
+    text.innerText = textos[finalText];
+
+    // Vibración
+    if (navigator.vibrate) {
+      navigator.vibrate([100, 50, 200]);
+    }
+
+    // Efecto zoom
+    img.style.transform = "scale(1.3)";
+    text.style.transform = "scale(1.3)";
+
+    setTimeout(() => {
+      img.style.transform = "scale(1)";
+      text.style.transform = "scale(1)";
+      tirando = false;
+    }, 300);
+  }
+    img, .text-dice {
+  transition: transform 0.3s ease;
+}
+</script>
 
 </body>
 </html>
