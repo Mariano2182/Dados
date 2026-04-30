@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dados</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #111;
+      color: #fff;
+    }
+
+    .container {
+      margin-top: 40px;
+    }
+
+    img {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border: 2px solid white;
+      border-radius: 10px;
+    }
+
+    .text-dice {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    button {
+      margin-top: 30px;
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      background: #ff0055;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #cc0044;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>🎲 Dados</h1>
+
+    <img id="imageDice" src="imagen1.png" alt="Imagen">
+
+    <div class="text-dice" id="textDice">Presioná tirar</div>
+
+    <button onclick="tirarDados()">Tirar</button>
+  </div>
+
+  <script>
+    const imagenes = [
+      "imagen1.png",
+      "imagen2.png",
+      "imagen3.png",
+      "imagen4.png",
+      "imagen5.png",
+      "imagen6.png"
+    ];
+
+    const textos = [
+      "1 metida",
+      "2 metidas",
+      "fuertazo",
+      "rápido hasta terminar",
+      "lento hasta terminar",
+      "2 minutos",
+      "5 minutos",
+      "despacito"
+    ];
+
+    function tirarDados() {
+      const randomImg = Math.floor(Math.random() * imagenes.length);
+      document.getElementById("imageDice").src = imagenes[randomImg];
+
+      const randomText = Math.floor(Math.random() * textos.length);
+      document.getElementById("textDice").innerText = textos[randomText];
+    }
+  </script>
+
+</body>
+</html>
