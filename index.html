@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Dados</title>
+
   <style>
-    <audio id="sonido" src="sonido.mp3"></audio>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
@@ -44,100 +44,112 @@
     button:hover {
       background: #cc0044;
     }
+
+    /* Animación suave */
+    img, .text-dice {
+      transition: transform 0.3s ease;
+    }
   </style>
 </head>
+
 <body>
 
   <div class="container">
     <h1>🎲 Dados</h1>
 
-    <img id="imageDice" src="imagen1.png" alt="Imagen">
+    <img id="imageDice" src="imagen1.gif" alt="Imagen">
 
     <div class="text-dice" id="textDice">Presioná tirar</div>
 
     <button onclick="tirarDados()">Tirar</button>
-    document.getElementById("sonido").play();
   </div>
 
+  <!-- AUDIO -->
+  <audio id="sonido" src="sonido.mp3"></audio>
+
   <script>
-  const imagenes = [
-    "imagen1.gif",
-    "imagen2.gif",
-    "imagen3.gif",
-    "imagen4.gif",
-    "imagen5.gif",
-    "imagen6.gif"
-  ];
+    const imagenes = [
+      "imagen1.gif",
+      "imagen2.gif",
+      "imagen3.gif",
+      "imagen4.gif",
+      "imagen5.gif",
+      "imagen6.gif"
+    ];
 
-  const textos = [
-    "1 metida",
-    "2 metidas",
-    "fuertazo",
-    "rápido hasta terminar",
-    "lento hasta terminar",
-    "2 minutos",
-    "5 minutos",
-    "despacito"
-  ];
+    const textos = [
+      "1 metida",
+      "2 metidas",
+      "fuertazo",
+      "rápido hasta terminar",
+      "lento hasta terminar",
+      "2 minutos",
+      "5 minutos",
+      "despacito"
+    ];
 
-  let tirando = false;
+    let tirando = false;
 
-  function tirarDados() {
-    if (tirando) return; // evita doble click
-    tirando = true;
+    function tirarDados() {
+      if (tirando) return;
+      tirando = true;
 
-    let velocidad = 50; // empieza rápido
-    let contador = 0;
-
-    function animar() {
-      const randomImg = Math.floor(Math.random() * imagenes.length);
-      const randomText = Math.floor(Math.random() * textos.length);
-
-      document.getElementById("imageDice").src = imagenes[randomImg];
-      document.getElementById("textDice").innerText = textos[randomText];
-
-      contador++;
-      velocidad += 10; // se va frenando
-
-      if (contador < 20) {
-        setTimeout(animar, velocidad);
-      } else {
-        resultadoFinal();
+      // 🔊 sonido
+      const sonido = document.getElementById("sonido");
+      if (sonido) {
+        sonido.currentTime = 0;
+        sonido.play().catch(() => {});
       }
+
+      let velocidad = 50;
+      let contador = 0;
+
+      function animar() {
+        const randomImg = Math.floor(Math.random() * imagenes.length);
+        const randomText = Math.floor(Math.random() * textos.length);
+
+        document.getElementById("imageDice").src = imagenes[randomImg];
+        document.getElementById("textDice").innerText = textos[randomText];
+
+        contador++;
+        velocidad += 10;
+
+        if (contador < 20) {
+          setTimeout(animar, velocidad);
+        } else {
+          resultadoFinal();
+        }
+      }
+
+      animar();
     }
 
-    animar();
-  }
+    function resultadoFinal() {
+      const finalImg = Math.floor(Math.random() * imagenes.length);
+      const finalText = Math.floor(Math.random() * textos.length);
 
-  function resultadoFinal() {
-    const finalImg = Math.floor(Math.random() * imagenes.length);
-    const finalText = Math.floor(Math.random() * textos.length);
+      const img = document.getElementById("imageDice");
+      const text = document.getElementById("textDice");
 
-    const img = document.getElementById("imageDice");
-    const text = document.getElementById("textDice");
+      img.src = imagenes[finalImg];
+      text.innerText = textos[finalText];
 
-    img.src = imagenes[finalImg];
-    text.innerText = textos[finalText];
+      // 📳 vibración
+      if (navigator.vibrate) {
+        navigator.vibrate([100, 50, 200]);
+      }
 
-    // Vibración
-    if (navigator.vibrate) {
-      navigator.vibrate([100, 50, 200]);
+      // 💥 zoom
+      img.style.transform = "scale(1.3)";
+      text.style.transform = "scale(1.3)";
+
+      setTimeout(() => {
+        img.style.transform = "scale(1)";
+        text.style.transform = "scale(1)";
+        tirando = false;
+      }, 300);
     }
-
-    // Efecto zoom
-    img.style.transform = "scale(1.3)";
-    text.style.transform = "scale(1.3)";
-
-    setTimeout(() => {
-      img.style.transform = "scale(1)";
-      text.style.transform = "scale(1)";
-      tirando = false;
-    }, 300);
-  }
-    img, .text-dice {
-  transition: transform 0.3s ease;
-}
-</script>
+  </script>
 
 </body>
 </html>
