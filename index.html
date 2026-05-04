@@ -123,26 +123,6 @@
   }, 100);
     }
 
-      function animar() {
-        const randomImg = Math.floor(Math.random() * imagenes.length);
-        const randomText = Math.floor(Math.random() * textos.length);
-
-        document.getElementById("imageDice").src = imagenes[randomImg];
-        document.getElementById("textDice").innerText = textos[randomText];
-
-        contador++;
-        velocidad += 10;
-
-        if (contador < 20) {
-          setTimeout(animar, velocidad);
-        } else {
-          resultadoFinal();
-        }
-      }
-
-      animar();
-    }
-
     function resultadoFinal() {
       const finalImg = Math.floor(Math.random() * imagenes.length);
       const finalText = Math.floor(Math.random() * textos.length);
