@@ -95,18 +95,29 @@
     let tirando = false;
 
     function tirarDados() {
-      if (tirando) return;
-      tirando = true;
+  if (tirando) return;
+  tirando = true;
 
-      // 🔊 sonido
-      const sonido = document.getElementById("sonido");
-      if (sonido) {
-        sonido.currentTime = 0;
-        sonido.play().catch(() => {});
-      }
+  const img = document.getElementById("imageDice");
+  const text = document.getElementById("textDice");
 
-      let velocidad = 50;
-      let contador = 0;
+  let vueltas = 0;
+
+  const intervalo = setInterval(() => {
+    const randomImg = Math.floor(Math.random() * imagenes.length);
+    const randomText = Math.floor(Math.random() * textos.length);
+
+    img.src = imagenes[randomImg];
+    text.innerText = textos[randomText];
+
+    vueltas++;
+
+    if (vueltas >= 15) {
+      clearInterval(intervalo);
+      resultadoFinal();
+    }
+  }, 100);
+    }
 
       function animar() {
         const randomImg = Math.floor(Math.random() * imagenes.length);
