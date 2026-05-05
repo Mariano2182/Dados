@@ -135,95 +135,233 @@
   const restricciones = [
     "sin hablar",
     "con ojos cerrados",
-    "muy lento",
-    "sin usar manos",
-    "manteniendo contacto visual",
-    "en silencio total",
-    "solo siguiendo al otro",
-    "cambiando ritmo cada 10s"
-  ];
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Juego Dados</title>
 
-  let tirando = false;
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  background: #111;
+  color: #fff;
+}
 
-  // 🎲 MOTOR INTELIGENTE
-  function generarClima() {
-    const nivel = Math.random();
+.container {
+  margin: 40px auto;
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 0 20px rgba(255,0,85,0.3);
+}
 
-    let base;
+img {
+  width: 100%;
+  border-radius: 10px;
+}
 
-    if (nivel < 0.33) base = climaSuave;
-    else if (nivel < 0.66) base = climaMedio;
-    else base = climaIntenso;
+button {
+  margin: 10px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  background: #ff0055;
+  color: white;
+  cursor: pointer;
+}
 
-    const accion = base[Math.floor(Math.random() * base.length)];
-    const restriccion = restricciones[Math.floor(Math.random() * restricciones.length)];
+button:disabled {
+  background: #555;
+}
 
-    return accion + " (" + restriccion + ")";
-  }
+#climaDice { color: #00ffaa; margin-top: 15px; }
+#textDice { color: #ffcc00; margin-top: 10px; }
+#timer { margin-top: 10px; font-size: 18px; }
 
-  // 🎯 FASE CLIMA
-  function tirarClima() {
-    const climaBox = document.getElementById("climaDice");
+.girando {
+  animation: girar 0.1s linear infinite;
+}
 
-    climaBox.style.transform = "scale(1.3)";
+@keyframes girar {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+</style>
+</head>
 
-    climaBox.innerText = generarClima();
+<body>
 
-    setTimeout(() => {
-      climaBox.style.transform = "scale(1)";
-    }, 300);
-  }
+<div class="container">
+  <h2>🎲 Juego</h2>
 
-  // 🔥 FASE ACCIÓN
-  function tirarAccion() {
-    if (tirando) return;
-    tirando = true;
+  <img id="imageDice" src="Screenshot_20260503-204624.png">
 
-    const img = document.getElementById("imageDice");
-    const text = document.getElementById("textDice");
+  <div id="climaDice">Elegí nivel y empezá</div>
+  <div id="textDice"></div>
+  <div id="timer"></div>
 
-    let vueltas = 0;
+  <div>
+    <button onclick="setNivel('suave')">Suave</button>
+    <button onclick="setNivel('medio')">Medio</button>
+    <button onclick="setNivel('intenso')">Intenso</button>
+  </div>
 
-    const intervalo = setInterval(() => {
-      const randomImg = Math.floor(Math.random() * imagenes.length);
-      const randomText = Math.floor(Math.random() * textos.length);
+  <button id="btnClima" onclick="tirarClima()" disabled>Entrar en clima</button>
+  <button id="btnAccion" onclick="tirarAccion()" disabled>Ir a la acción</button>
+  <button onclick="resetJuego()">Nueva ronda</button>
+</div>
 
-      img.src = imagenes[randomImg];
-      text.innerText = textos[randomText];
+<script>
+const imagenes = [
+  "Screenshot_20260503-204624.png",
+  "Screenshot_20260503-204645.png",
+  "Screenshot_20260503-204701.png",
+  "Screenshot_20260503-204729.png",
+  "Screenshot_20260503-204743.png",
+  "Screenshot_20260503-204757.png",
+  "Screenshot_20260503-204819.png",
+  "Screenshot_20260503-204843.png",
+  "Screenshot_20260503-204911.png",
+  "Screenshot_20260503-204941.png",
+  "Screenshot_20260503-205131.png",
+  "Screenshot_20260503-205122.png",
+  "Screenshot_20260503-205113.png",
+  "Screenshot_20260503-205056.png",
+  "Screenshot_20260503-204950.png"
+];
 
-      vueltas++;
+const textos = [
+  "1 metida",
+  "2 metidas",
+  "fuertazo",
+  "rápido hasta terminar",
+  "lento hasta terminar",
+  "2 minutos",
+  "5 minutos",
+  "despacito"
+];
 
-      if (vueltas >= 15) {
-        clearInterval(intervalo);
-        resultadoFinal();
-      }
-    }, 100);
-  }
+const clima = {
+  suave: [
+    "Abrazo",
+    "Mirarse",
+    "Respirar juntos",
+    "Tomarse de las manos"
+  ],
+  medio: [
+    "Caricias",
+    "Besos lentos",
+    "Explorar",
+    "Movimiento suave"
+  ],
+  intenso: [
+    "Controlar ritmo",
+    "Mantener tensión",
+    "Movimiento continuo",
+    "Aumentar intensidad"
+  ]
+};
 
-  function resultadoFinal() {
-    const finalImg = Math.floor(Math.random() * imagenes.length);
-    const finalText = Math.floor(Math.random() * textos.length);
+const restricciones = [
+  "sin hablar",
+  "ojos cerrados",
+  "muy lento",
+  "sin manos",
+  "contacto visual",
+  "en silencio total"
+];
 
-    const img = document.getElementById("imageDice");
-    const text = document.getElementById("textDice");
+let nivel = null;
+let climaListo = false;
+let timerActivo = null;
 
-    img.src = imagenes[finalImg];
-    text.innerText = textos[finalText];
+function setNivel(n) {
+  nivel = n;
+  document.getElementById("climaDice").innerText = "Nivel: " + n;
+  document.getElementById("btnClima").disabled = false;
+}
 
-    if (navigator.vibrate) {
-      navigator.vibrate([100, 50, 200]);
+function generarClima() {
+  const base = clima[nivel];
+  const accion = base[Math.floor(Math.random() * base.length)];
+  const restriccion = restricciones[Math.floor(Math.random() * restricciones.length)];
+  return accion + " (" + restriccion + ")";
+}
+
+function tirarClima() {
+  const texto = generarClima();
+  const tiempo = Math.floor(Math.random() * 3) + 1;
+
+  document.getElementById("climaDice").innerText = texto;
+  iniciarTimer(tiempo * 60);
+
+  climaListo = true;
+  document.getElementById("btnAccion").disabled = true;
+}
+
+function iniciarTimer(segundos) {
+  clearInterval(timerActivo);
+
+  timerActivo = setInterval(() => {
+    let min = Math.floor(segundos / 60);
+    let sec = segundos % 60;
+
+    document.getElementById("timer").innerText =
+      "⏱ " + min + ":" + (sec < 10 ? "0" : "") + sec;
+
+    segundos--;
+
+    if (segundos < 0) {
+      clearInterval(timerActivo);
+      document.getElementById("timer").innerText = "✅ Clima completo";
+      document.getElementById("btnAccion").disabled = false;
     }
+  }, 1000);
+}
 
-    img.style.transform = "scale(1.3)";
-    text.style.transform = "scale(1.3)";
+function tirarAccion() {
+  if (!climaListo) return;
 
-    setTimeout(() => {
-      img.style.transform = "scale(1)";
-      text.style.transform = "scale(1)";
-      tirando = false;
-    }, 300);
-  }
-  </script>
+  const img = document.getElementById("imageDice");
+  const text = document.getElementById("textDice");
+
+  img.classList.add("girando");
+
+  let vueltas = 0;
+
+  const intervalo = setInterval(() => {
+    const randomImg = Math.floor(Math.random() * imagenes.length);
+    const randomText = Math.floor(Math.random() * textos.length);
+
+    img.src = imagenes[randomImg];
+    text.innerText = textos[randomText];
+
+    vueltas++;
+
+    if (vueltas >= 15) {
+      clearInterval(intervalo);
+      img.classList.remove("girando");
+    }
+  }, 100);
+}
+
+function resetJuego() {
+  nivel = null;
+  climaListo = false;
+  clearInterval(timerActivo);
+
+  document.getElementById("climaDice").innerText = "Elegí nivel";
+  document.getElementById("textDice").innerText = "";
+  document.getElementById("timer").innerText = "";
+
+  document.getElementById("btnClima").disabled = true;
+  document.getElementById("btnAccion").disabled = true;
+}
+</script>
 
 </body>
 </html>
