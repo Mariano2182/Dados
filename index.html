@@ -67,87 +67,152 @@
   <audio id="sonido" src="sonido.mp3"></audio>
 
   <script>
-    const imagenes = [
-      "Screenshot_20260503-204624.png",
-      "Screenshot_20260503-204645.png",
-      "Screenshot_20260503-204701.png",
-      "Screenshot_20260503-204729.png",
-      "Screenshot_20260503-204743.png",
-      "Screenshot_20260503-204757.png",
-      "Screenshot_20260503-204819.png",
-      "Screenshot_20260503-204843.png",
-      "Screenshot_20260503-204911.png",
-      "Screenshot_20260503-204941.png",
-      "Screenshot_20260503-205131.png",
-      "Screenshot_20260503-205122.png",
-      "Screenshot_20260503-205113.png",
-      "Screenshot_20260503-205056.png",
-      "Screenshot_20260503-204950.png"
-    ];
+  const imagenes = [
+    "Screenshot_20260503-204624.png",
+    "Screenshot_20260503-204645.png",
+    "Screenshot_20260503-204701.png",
+    "Screenshot_20260503-204729.png",
+    "Screenshot_20260503-204743.png",
+    "Screenshot_20260503-204757.png",
+    "Screenshot_20260503-204819.png",
+    "Screenshot_20260503-204843.png",
+    "Screenshot_20260503-204911.png",
+    "Screenshot_20260503-204941.png",
+    "Screenshot_20260503-205131.png",
+    "Screenshot_20260503-205122.png",
+    "Screenshot_20260503-205113.png",
+    "Screenshot_20260503-205056.png",
+    "Screenshot_20260503-204950.png"
+  ];
 
-    const textos = [
-      "1 metida",
-      "2 metidas",
-      "fuertazo",
-      "rápido hasta terminar",
-      "lento hasta terminar",
-      "2 minutos",
-      "5 minutos",
-      "despacito"
-    ];
+  const textos = [
+    "1 metida",
+    "2 metidas",
+    "fuertazo",
+    "rápido hasta terminar",
+    "lento hasta terminar",
+    "2 minutos",
+    "5 minutos",
+    "despacito"
+  ];
 
-    let tirando = false;
+  // 🎯 ACCIONES POR NIVEL
+  const climaSuave = [
+    "Tomarse de las manos",
+    "Mirarse en silencio",
+    "Abrazo largo",
+    "Respirar juntos",
+    "Sonreír sin hablar"
+  ];
 
-    function tirarDados() {
-  if (tirando) return;
-  tirando = true;
+  const climaMedio = [
+    "Caricias en brazos",
+    "Besos lentos",
+    "Recorrer la espalda",
+    "Jugar con el pelo",
+    "Acercarse lentamente"
+  ];
 
-  const img = document.getElementById("imageDice");
-  const text = document.getElementById("textDice");
+  const climaIntenso = [
+    "Mantener el suspenso",
+    "Explorar lentamente",
+    "Aumentar intensidad",
+    "Movimiento continuo",
+    "Controlar el ritmo"
+  ];
 
-  let vueltas = 0;
+  // ⚙️ RESTRICCIONES (la magia)
+  const restricciones = [
+    "sin hablar",
+    "con ojos cerrados",
+    "muy lento",
+    "sin usar manos",
+    "manteniendo contacto visual",
+    "en silencio total",
+    "solo siguiendo al otro",
+    "cambiando ritmo cada 10s"
+  ];
 
-  const intervalo = setInterval(() => {
-    const randomImg = Math.floor(Math.random() * imagenes.length);
-    const randomText = Math.floor(Math.random() * textos.length);
+  let tirando = false;
 
-    img.src = imagenes[randomImg];
-    text.innerText = textos[randomText];
+  // 🎲 MOTOR INTELIGENTE
+  function generarClima() {
+    const nivel = Math.random();
 
-    vueltas++;
+    let base;
 
-    if (vueltas >= 15) {
-      clearInterval(intervalo);
-      resultadoFinal();
-    }
-  }, 100);
-    }
+    if (nivel < 0.33) base = climaSuave;
+    else if (nivel < 0.66) base = climaMedio;
+    else base = climaIntenso;
 
-    function resultadoFinal() {
-      const finalImg = Math.floor(Math.random() * imagenes.length);
-      const finalText = Math.floor(Math.random() * textos.length);
+    const accion = base[Math.floor(Math.random() * base.length)];
+    const restriccion = restricciones[Math.floor(Math.random() * restricciones.length)];
 
-      const img = document.getElementById("imageDice");
-      const text = document.getElementById("textDice");
+    return accion + " (" + restriccion + ")";
+  }
 
-      img.src = imagenes[finalImg];
-      text.innerText = textos[finalText];
+  // 🎯 FASE CLIMA
+  function tirarClima() {
+    const climaBox = document.getElementById("climaDice");
 
-      // 📳 vibración
-      if (navigator.vibrate) {
-        navigator.vibrate([100, 50, 200]);
+    climaBox.style.transform = "scale(1.3)";
+
+    climaBox.innerText = generarClima();
+
+    setTimeout(() => {
+      climaBox.style.transform = "scale(1)";
+    }, 300);
+  }
+
+  // 🔥 FASE ACCIÓN
+  function tirarAccion() {
+    if (tirando) return;
+    tirando = true;
+
+    const img = document.getElementById("imageDice");
+    const text = document.getElementById("textDice");
+
+    let vueltas = 0;
+
+    const intervalo = setInterval(() => {
+      const randomImg = Math.floor(Math.random() * imagenes.length);
+      const randomText = Math.floor(Math.random() * textos.length);
+
+      img.src = imagenes[randomImg];
+      text.innerText = textos[randomText];
+
+      vueltas++;
+
+      if (vueltas >= 15) {
+        clearInterval(intervalo);
+        resultadoFinal();
       }
+    }, 100);
+  }
 
-      // 💥 zoom
-      img.style.transform = "scale(1.3)";
-      text.style.transform = "scale(1.3)";
+  function resultadoFinal() {
+    const finalImg = Math.floor(Math.random() * imagenes.length);
+    const finalText = Math.floor(Math.random() * textos.length);
 
-      setTimeout(() => {
-        img.style.transform = "scale(1)";
-        text.style.transform = "scale(1)";
-        tirando = false;
-      }, 300);
+    const img = document.getElementById("imageDice");
+    const text = document.getElementById("textDice");
+
+    img.src = imagenes[finalImg];
+    text.innerText = textos[finalText];
+
+    if (navigator.vibrate) {
+      navigator.vibrate([100, 50, 200]);
     }
+
+    img.style.transform = "scale(1.3)";
+    text.style.transform = "scale(1.3)";
+
+    setTimeout(() => {
+      img.style.transform = "scale(1)";
+      text.style.transform = "scale(1)";
+      tirando = false;
+    }, 300);
+  }
   </script>
 
 </body>
