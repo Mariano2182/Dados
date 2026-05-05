@@ -57,14 +57,24 @@
   <div class="container">
     <h1>🎲 Dados</h1>
 
+    <!-- IMAGEN -->
     <img id="imageDice" src="Screenshot_20260503-204624.png">
-    <div class="text-dice" id="textDice">Presioná tirar</div>
 
-    <button onclick="tirarDados()">Tirar</button>
+    <!-- CLIMA -->
+    <div class="text-dice" id="climaDice">Entrar en clima</div>
+
+    <!-- ACCIÓN -->
+    <div class="text-dice" id="textDice">Acción</div>
+
+    <!-- BOTONES CORRECTOS -->
+    <button onclick="tirarClima()">Entrar en clima</button>
+    <button onclick="tirarAccion()">Ir a la acción</button>
+
   </div>
 
-  <!-- AUDIO -->
   <audio id="sonido" src="sonido.mp3"></audio>
+
+</body>
 
   <script>
   const imagenes = [
