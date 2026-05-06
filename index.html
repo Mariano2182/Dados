@@ -2,44 +2,59 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Dados</title>
+<title>Dados Ricos</title>
 
 <style>
 body {
+  margin: 0;
   font-family: Arial;
+  background: black;
+  color: white;
   text-align: center;
-  background: #000;
-  color: #fff;
 }
 
-/* 🔥 NEON */
-#neon {
-  font-size: 60px;
+/* 🔥 PANTALLA INICIO */
+#pantallaInicio {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.neon {
+  font-size: 50px;
   color: #ff0055;
-  margin-top: 40%;
   text-shadow:
+    0 0 5px #ff0055,
     0 0 10px #ff0055,
     0 0 20px #ff0055,
-    0 0 40px #ff0055,
-    0 0 80px #ff0055;
+    0 0 40px #ff0055;
   animation: parpadeo 1.5s infinite alternate;
 }
 
 @keyframes parpadeo {
   from { opacity: 1; }
-  to { opacity: 0.6; }
+  to { opacity: 0.5; }
 }
 
+/* 🎮 JUEGO */
 .container {
   display: none;
-  margin-top: 30px;
+  margin: 30px auto;
+  width: 90%;
+  max-width: 400px;
+  background: #111;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(255,0,85,0.3);
 }
 
 img {
-  width: 90%;
-  max-width: 400px;
+  width: 100%;
   border-radius: 10px;
-  display: none;
+  display: none; /* 🔥 oculto hasta fase acción */
 }
 
 button {
@@ -49,11 +64,16 @@ button {
   border-radius: 10px;
   background: #ff0055;
   color: white;
+  cursor: pointer;
 }
 
 button:disabled {
-  background: #444;
+  background: #555;
 }
+
+#climaDice { color: #00ffaa; margin-top: 15px; }
+#textDice { color: #ffcc00; margin-top: 10px; }
+#timer { margin-top: 10px; }
 
 .girando {
   animation: girar 0.1s linear infinite;
@@ -68,21 +88,23 @@ button:disabled {
 
 <body>
 
-<!-- 🔥 PANTALLA NEON -->
-<div id="neon">DADOS RICOS</div>
+<!-- 🔥 INICIO -->
+<div id="pantallaInicio" onclick="iniciarJuego()">
+  <h1 class="neon">DADOS RICOS</h1>
+</div>
 
 <!-- 🎮 JUEGO -->
-<div class="container" id="game">
+<div class="container" id="juego">
 
-  <h2 id="estado">Elegí nivel</h2>
+  <h2>🎲 Juego</h2>
 
   <img id="imageDice" src="Screenshot_20260503-204624.png">
 
-  <div id="timer"></div>
+  <div id="climaDice">Elegí nivel</div>
   <div id="textDice"></div>
+  <div id="timer"></div>
 
-  <!-- NIVELES -->
-  <div id="niveles">
+  <div>
     <button onclick="setNivel('Suave')">Suave</button>
     <button onclick="setNivel('Medio')">Medio</button>
     <button onclick="setNivel('Intenso')">Intenso</button>
@@ -90,26 +112,28 @@ button:disabled {
 
   <button id="btnClima" onclick="tirarClima()" disabled>Entrar en clima</button>
   <button id="btnAccion" onclick="tirarAccion()" disabled>Ir a la acción</button>
+  <button onclick="resetJuego()">Nueva ronda</button>
 
 </div>
-<script>
-  const climaBase = [
-  "Besos",
-  "Caricias",
-  "Mirarse",
-  "Abrazarse",
-  "Respirar juntos",
-  "Recorrer el cuerpo lentamente"
-];
 
-const restricciones = [
-  "sin hablar",
-  "con ojos cerrados",
-  "muy lento",
-  "sin manos",
-  "en silencio total",
-  "mirándose fijo"
-];
+<audio id="sonido" src="sonido.mp3"></audio>
+
+<script>
+
+// 🔥 TRANSICIÓN INICIO
+function iniciarJuego() {
+  const inicio = document.getElementById("pantallaInicio");
+
+  inicio.style.transform = "scale(1.2)";
+  inicio.style.opacity = "0";
+
+  setTimeout(() => {
+    inicio.style.display = "none";
+    document.getElementById("juego").style.display = "block";
+  }, 300);
+}
+
+// 🎲 IMÁGENES
 const imagenes = [
   "Screenshot_20260503-204624.png",
   "Screenshot_20260503-204645.png",
@@ -128,56 +152,75 @@ const imagenes = [
   "Screenshot_20260503-204950.png"
 ];
 
+// 🎯 ACCIONES
 const textos = [
   "1 metida",
   "2 metidas",
   "fuertazo",
-  "rápido",
-  "lento",
-  "2 min",
-  "5 min",
+  "rápido hasta terminar",
+  "lento hasta terminar",
+  "2 minutos",
+  "5 minutos",
   "despacito"
 ];
 
+// ❤️ CLIMA
+const climaBase = [
+  "Besos",
+  "Caricias",
+  "Mirarse",
+  "Abrazarse",
+  "Respirar juntos",
+  "Explorar lentamente"
+];
+
+const restricciones = [
+  "sin hablar",
+  "con ojos cerrados",
+  "muy lento",
+  "sin manos",
+  "en silencio total",
+  "mirándose fijo"
+];
+
+let nivel = null;
 let climaListo = false;
 let timerActivo = null;
 
-/* 🎚 NIVEL */
-function setNivel(nivel) {
-  document.getElementById("neon").style.display = "none";
-  document.getElementById("game").style.display = "block";
-
-  document.getElementById("estado").innerText = "Nivel: " + nivel;
-
+// 🎯 NIVEL
+function setNivel(n) {
+  nivel = n;
+  document.getElementById("climaDice").innerText = "Nivel: " + n;
   document.getElementById("btnClima").disabled = false;
 }
 
-/* 💕 CLIMA */
+// 🔥 CLIMA
 function tirarClima() {
   const accion = climaBase[Math.floor(Math.random() * climaBase.length)];
   const restriccion = restricciones[Math.floor(Math.random() * restricciones.length)];
 
-  const combinacion = accion + " (" + restriccion + ")";
-
-  document.getElementById("estado").innerText = combinacion;
+  document.getElementById("climaDice").innerText =
+    accion + " (" + restriccion + ")";
 
   let segundos = 10;
 
   timerActivo = setInterval(() => {
     document.getElementById("timer").innerText = "⏱ " + segundos;
-
     segundos--;
 
     if (segundos < 0) {
       clearInterval(timerActivo);
-      document.getElementById("estado").innerText = "🔥 Listo para acción";
+      document.getElementById("timer").innerText = "🔥 Listo";
       document.getElementById("btnAccion").disabled = false;
+      climaListo = true;
     }
   }, 1000);
 }
 
-/* 🎲 ACCION */
+// 🎲 ACCIÓN
 function tirarAccion() {
+  if (!climaListo) return;
+
   const img = document.getElementById("imageDice");
   const text = document.getElementById("textDice");
 
@@ -201,6 +244,22 @@ function tirarAccion() {
     }
   }, 100);
 }
+
+// 🔄 RESET
+function resetJuego() {
+  nivel = null;
+  climaListo = false;
+  clearInterval(timerActivo);
+
+  document.getElementById("climaDice").innerText = "Elegí nivel";
+  document.getElementById("textDice").innerText = "";
+  document.getElementById("timer").innerText = "";
+
+  document.getElementById("btnClima").disabled = true;
+  document.getElementById("btnAccion").disabled = true;
+  document.getElementById("imageDice").style.display = "none";
+}
+
 </script>
 
 </body>
