@@ -1,0 +1,21 @@
+{
+  "name": "Dados Ricos",
+  "short_name": "Dados",
+  "description": "Juego interactivo de dados con fases de clima y acción",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#ff0055",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
