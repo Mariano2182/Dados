@@ -117,7 +117,16 @@ button:disabled {
 </div>
 
 <audio id="sonido" src="sonido.mp3"></audio>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ff0055">
 
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js").then(() => {
+    console.log("Service Worker registrado");
+  });
+}
+</script>
 <script>
 
 // 🔥 TRANSICIÓN INICIO
